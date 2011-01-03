@@ -19,13 +19,14 @@
     <spring:bean id="myRealm" class="org.mule.module.shiro.TextConfigurationRealm">
         <spring:property name="userDefinitions">
           <spring:value>            
-            authorized=password,authorized_role
-            unauthorized=password
+            administrator=password,administrator_role
+            user=password
           </spring:value>
         </spring:property>
         <spring:property name="roleDefinitions">
           <spring:value>            
-            authorized_role=test_permission
+            administrator_role=read,write
+            user_role=read
           </spring:value>
         </spring:property>
     </spring:bean>
@@ -47,7 +48,7 @@
     <flow name="test">
        <inbound-endpoint address="http://localhost:4567" exchange-pattern="request-response"/>
        <http:basic-security-filter realm="mule-realm"/>
-       <shiro:authorization-filter permission="test_permission"/>
+       <shiro:authorization-filter permission="write"/>
        <component class="org.mule.component.simple.EchoComponent"/>
     </flow>
 </mule>
