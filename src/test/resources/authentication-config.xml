@@ -41,7 +41,7 @@
     
     <flow name="test">
        <inbound-endpoint address="http://localhost:4567" exchange-pattern="request-response"/>
-       <shiro:http-security-filter realm="mule-realm"/>
+       <http:basic-security-filter realm="mule-realm"/>
        <component class="org.mule.component.simple.EchoComponent"/>
     </flow>
 </mule>
