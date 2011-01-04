@@ -37,17 +37,17 @@ First, you need to declare your basic Shiro security setup:
 
 There are a couple critical items:
 
-* The Shiro realm \– Realms in Shiro map to databases/property files/etc where 
+* The Shiro realm: Realms in Shiro map to databases/property files/etc where 
   your users are stored. Shiro contains out of the box support for JDBC, LDAP,
   and text files. I’ve created my users in the XML file (very handy for 
   testing) using the TextDefinitionRealm. The userDefinitions proeprty 
   contains a list of users with their password and role. The roleDefinitions 
   property contains a list of roles and the permissions that they imply.
-* The Shiro SecurityManager \– this is what instantiates Shiro and holds all 
+* The Shiro SecurityManager: this is what instantiates Shiro and holds all 
   the realms with which Shrio can do authentication.
-* The Mule security manager definition \– we’re simply telling Mule to use the 
+* The Mule security manager definition: we’re simply telling Mule to use the 
   Shiro SecurityManager here.
-* The Shiro bean post processor \– this inits/destroys all the Shiro beans 
+* The Shiro bean post processor: this inits/destroys all the Shiro beans 
   properly.
   
 Next up, you can implement authentication or authorization using security 
