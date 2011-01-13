@@ -20,12 +20,14 @@ import org.mule.api.security.SecurityProviderNotFoundException;
 import org.mule.api.security.UnknownAuthenticationTypeException;
 import org.mule.security.AbstractSecurityFilter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.WildcardPermission;
+import org.apache.shiro.subject.support.DelegatingSubject;
 
 /**
  * Ensures that the Authenticated user is authorized against the specified
@@ -33,7 +35,8 @@ import org.apache.shiro.authz.permission.WildcardPermission;
  */
 public class AuthorizationFilter extends AbstractSecurityFilter
 {
-    private Collection<Permission> permissions;
+    private Collection<String> permissions;
+    private Collection<String> roles;
 
     @Override
     public void doFilter(MuleEvent event)
@@ -51,7 +54,19 @@ public class AuthorizationFilter extends AbstractSecurityFilter
         
         try 
         {
-            shiroAuth.getSubject().checkPermissions(getPermissions(event));
+            Collection<Permission> permissions = getPermissions(event);
+            if (permissions != null)
+            {
+                shiroAuth.getSubject().checkPermissions(permissions);
+            }
+            
+            Collection<String> roles = getRoles(event);
+            if (roles != null)
+            {
+                // work around SHIRO-234 and SHIRO-235
+                DelegatingSubject subj = ((DelegatingSubject)shiroAuth.getSubject());
+                subj.getSecurityManager().checkRoles(subj.getPrincipals(), roles.toArray(new String[0]));
+            }
         }
         catch (UnauthorizedException e)
         {
@@ -68,22 +83,41 @@ public class AuthorizationFilter extends AbstractSecurityFilter
      */
     protected Collection<Permission> getPermissions(MuleEvent event)
     {
-        return permissions;
+        List<Permission> p2 = new ArrayList<Permission>();
+        if (permissions != null)
+        {
+            for (String name : permissions)
+            {
+                p2.add(new WildcardPermission(name));
+            }
+        }
+        return p2;
     }
 
-    public Collection<Permission> getPermissions()
+    /**
+     * The required set of permissions for the event. By default this is a
+     * static Collection, but you can extend this class to make it a dynamic 
+     * Collection.
+     * @param event
+     * @return
+     */
+    protected Collection<String> getRoles(MuleEvent event)
+    {
+        return roles;
+    }
+    public Collection<String> getPermissions()
     {
         return permissions;
     }
 
-    public void setPermissions(Collection<Permission> permissions)
+    public void setRoles(Collection<String> roles)
+    {
+        this.roles = roles;
+    }
+
+    public void setPermissions(Collection<String> permissions)
     {
         this.permissions = permissions;
-    }
-
-    public void setPermission(String permission)
-    {
-        this.permissions = Arrays.asList((Permission)new WildcardPermission(permission));
     }
     
 }

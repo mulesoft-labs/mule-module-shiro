@@ -27,12 +27,14 @@ public class AuthorizationTestCase extends FunctionalTestCase
 
     public void testUnauthroizedUser() throws Exception
     {
-        doRequest("mule-realm", "localhost", "user", "password", getUrl(), true, false, 405);
+        doRequest("mule-realm", "localhost", "user", "password", "http://localhost:4567/permissions", true, false, 405);
+        doRequest("mule-realm", "localhost", "user", "password", "http://localhost:4567/roles", true, false, 405);
     }
 
     public void testAuthroizedUser() throws Exception
     {
-        doRequest("mule-realm", "localhost", "administrator", "password", getUrl(), true, false, 200);
+        doRequest("mule-realm", "localhost", "administrator", "password", "http://localhost:4567/permissions", true, false, 200);
+        doRequest("mule-realm", "localhost", "administrator", "password", "http://localhost:4567/roles", true, false, 200);
     }
     
     private void doRequest(String realm,

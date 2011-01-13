@@ -56,7 +56,7 @@ filters:
 	<flow name="test">
 	   <inbound-endpoint address="http://localhost/edit/something" exchange-pattern="request-response"/>
 	   <http:basic-security-filter realm="mule-realm"/>
-	   <shiro:authorization-filter permission="write"/>
+	   <shiro:authorization-filter permissions="write" roles="administrator_role"/>
 	   ... logic which requires write access
 	</flow>
 
