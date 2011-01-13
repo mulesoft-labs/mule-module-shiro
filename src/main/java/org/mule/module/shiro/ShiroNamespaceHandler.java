@@ -26,5 +26,6 @@ public class ShiroNamespaceHandler extends NamespaceHandlerSupport
         registerBeanDefinitionParser("security-manager", new NamedDefinitionParser(MuleProperties.OBJECT_SECURITY_MANAGER));
         registerBeanDefinitionParser("delegate-security-provider", new ChildDefinitionParser("provider", ShiroAuthenticationProvider.class));
         registerBeanDefinitionParser("authorization-filter", new SecurityFilterDefinitionParser(AuthorizationFilter.class));
+        registerBeanDefinitionParser("http-url-pattern-filter", new SecurityFilterDefinitionParser(HttpUrlPatternFilter.class));
     }
 }

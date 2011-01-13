@@ -60,6 +60,15 @@ filters:
 	   ... logic which requires write access
 	</flow>
 
+Alternatively you can combine this all into a url pattern matching filter:
+
+	<flow name="test">
+	   <inbound-endpoint address="http://localhost" exchange-pattern="request-response"/>
+	   <shiro:http-url-pattern-filter urlPattern="/edit/something/**" permissions="write"/>
+	   ... logic which requires write access
+	</flow>
+
+
 Maven Repository
 ================
 You can find builds up here:

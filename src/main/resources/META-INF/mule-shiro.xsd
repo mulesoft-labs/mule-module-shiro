@@ -79,4 +79,30 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:element name="http-url-pattern-filter" type="httpUrlPatternFilterType" substitutionGroup="mule:abstract-security-filter">
+        <xsd:annotation>
+            <xsd:documentation>
+                Authenticates and authorizes a use if the URL pattern is matched.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="httpUrlPatternFilterType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractSecurityFilterType">
+                <xsd:attribute name="realm" type="xsd:string"/>
+                <xsd:attribute name="urlPattern" type="xsd:string"/>
+                <xsd:attribute name="roles" type="xsd:string"/>
+                <xsd:attribute name="permissions" type="xsd:string"/>
+                <xsd:attribute name="securityProviders" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The delegate-security-provider to use for authenticating. Use this element
+                            in case you have multiple security managers defined in your configuration.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
 </xsd:schema>

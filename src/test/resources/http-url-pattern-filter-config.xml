@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring="http://www.springframework.org/schema/beans"
+       xmlns:http="http://www.mulesoft.org/schema/mule/http"
+       xmlns:shiro="http://www.mulesoft.org/schema/mule/shiro"
+       xmlns:ss="http://www.springframework.org/schema/security"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.2/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/3.2/mule-http.xsd
+       http://www.mulesoft.org/schema/mule/shiro http://www.mulesoft.org/schema/mule/shiro/3.2/mule-shiro.xsd">
+
+    <shiro:security-manager>
+        <shiro:delegate-security-provider name="memory-dao" delegate-ref="securityManager"/>
+    </shiro:security-manager>
+    
+    <spring:bean id="myRealm" class="org.mule.module.shiro.TextConfigurationRealm">
+        <spring:property name="userDefinitions">
+          <spring:value>            
+            administrator=password,administrator_role
+            user=password
+          </spring:value>
+        </spring:property>
+        <spring:property name="roleDefinitions">
+          <spring:value>            
+            administrator_role=read,write
+            user_role=read
+          </spring:value>
+        </spring:property>
+    </spring:bean>
+    
+    <spring:bean id="securityManager" class="org.apache.shiro.mgt.DefaultSecurityManager">
+        <spring:property name="realm" ref="myRealm"/>
+    </spring:bean>
+    <spring:bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    
+    <!-- For simplest integration, so that all SecurityUtils.* methods work in all cases, -->
+    <!-- make the securityManager bean a static singleton.  DO NOT do this in web         -->
+    <!-- applications - see the 'Web Applications' section below instead.                 -->
+    <spring:bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <spring:property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager"/>
+        <spring:property name="arguments" ref="securityManager"/>
+    </spring:bean>
+
+    
+    <flow name="permissions">
+       <inbound-endpoint address="http://localhost:4567/permissions" exchange-pattern="request-response"/>
+       <shiro:http-url-pattern-filter urlPattern="/permissions/auth" permissions="write" realm="mule-realm"/>
+       <component class="org.mule.component.simple.EchoComponent"/>
+    </flow>
+    
+    <flow name="role">
+       <inbound-endpoint address="http://localhost:4567/roles" exchange-pattern="request-response"/>
+       <shiro:http-url-pattern-filter urlPattern="/roles/auth" roles="administrator_role" realm="mule-realm"/>
+       <component class="org.mule.component.simple.EchoComponent"/>
+    </flow>
+</mule>

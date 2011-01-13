@@ -16,6 +16,7 @@ import org.mule.api.security.CryptoFailureException;
 import org.mule.api.security.EncryptionStrategyNotFoundException;
 import org.mule.api.security.SecurityException;
 import org.mule.api.security.SecurityProviderNotFoundException;
+import org.mule.api.security.UnauthorisedException;
 import org.mule.api.security.UnknownAuthenticationTypeException;
 import org.mule.api.transport.PropertyScope;
 import org.mule.transport.http.HttpConnector;
@@ -25,14 +26,15 @@ import java.util.Collection;
 
 import org.springframework.util.AntPathMatcher;
 
-public class HttpAuthorizationFilter extends HttpBasicAuthenticationFilter
+public class HttpUrlPatternFilter extends HttpBasicAuthenticationFilter
 {
     private String urlPattern;
-    private Collection<String> requiredPermissions;
-    private Collection<String> requiredRoles;
+    private Collection<String> permissions;
+    private Collection<String> roles;
     private String unauthorizedUrl;
     private String loginUrl;
     private AuthorizationFilter authorizationFilter;
+    private AntPathMatcher matcher = new AntPathMatcher();
     
     @Override
     protected void doInitialise() throws InitialisationException
@@ -40,14 +42,16 @@ public class HttpAuthorizationFilter extends HttpBasicAuthenticationFilter
         super.doInitialise();
         
         authorizationFilter = new AuthorizationFilter();
-        authorizationFilter.setPermissions(requiredPermissions);
-        authorizationFilter.setRoles(requiredRoles);
+        authorizationFilter.setPermissions(permissions);
+        authorizationFilter.setRoles(roles);
+        authorizationFilter.setSecurityManager(getSecurityManager());
+        authorizationFilter.setMuleContext(muleContext);
+        authorizationFilter.setSecurityProviders(getSecurityProviders());
+        authorizationFilter.initialise();
     }
 
     protected boolean applies(MuleEvent event)
     {
-        AntPathMatcher matcher = new AntPathMatcher();
-        
         MuleMessage message = event.getMessage();
         if (matcher.match(urlPattern, (String) message.getProperty(HttpConnector.HTTP_REQUEST_PROPERTY, PropertyScope.INBOUND)))
         {
@@ -63,7 +67,15 @@ public class HttpAuthorizationFilter extends HttpBasicAuthenticationFilter
     {
         if (applies(event))
         {
-            super.doFilter(event);
+            try 
+            {
+                super.doFilter(event);
+            } 
+            catch (UnauthorisedException e)
+            {
+                // TODO: redirect
+                throw e;
+            }
             
             authorizationFilter.doFilter(event);
         }
@@ -79,24 +91,24 @@ public class HttpAuthorizationFilter extends HttpBasicAuthenticationFilter
         this.urlPattern = urlPattern;
     }
 
-    public Collection<String> getRequiredPermissions()
+    public Collection<String> getPermissions()
     {
-        return requiredPermissions;
+        return permissions;
     }
 
-    public void setRequiredPermissions(Collection<String> requiredPermissions)
+    public void setPermissions(Collection<String> requiredPermissions)
     {
-        this.requiredPermissions = requiredPermissions;
+        this.permissions = requiredPermissions;
     }
 
-    public Collection<String> getRequiredRoles()
+    public Collection<String> getRoles()
     {
-        return requiredRoles;
+        return roles;
     }
 
-    public void setRequiredRoles(Collection<String> requiredRoles)
+    public void setRoles(Collection<String> requiredRoles)
     {
-        this.requiredRoles = requiredRoles;
+        this.roles = requiredRoles;
     }
 
     public String getUnauthorizedUrl()
