@@ -9,6 +9,7 @@
  */
 package org.mule.module.shiro;
 
+import org.mule.api.MuleEvent;
 import org.mule.api.security.Authentication;
 
 import java.util.Map;
@@ -21,16 +22,18 @@ public class ShiroAuthenticationResult implements Authentication
     private final Subject subject;
     private boolean authenticated;
     private Map properties;
+    private final MuleEvent event;
 
-    public ShiroAuthenticationResult(Subject subject)
+    public ShiroAuthenticationResult(Subject subject, MuleEvent event)
     {
-        this(subject, null);
+        this(subject, null, event);
     }
     
-    public ShiroAuthenticationResult(Subject subject, Map properties)
+    public ShiroAuthenticationResult(Subject subject, Map properties, MuleEvent event)
     {
         this.subject = subject;
         this.properties = properties;
+        this.event = event;
     }
 
     public void setAuthenticated(boolean b)
@@ -66,6 +69,11 @@ public class ShiroAuthenticationResult implements Authentication
     public Subject getSubject()
     {
         return subject;
+    }
+
+    public MuleEvent getEvent()
+    {
+        return event;
     }
 
 }

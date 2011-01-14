@@ -50,6 +50,7 @@
                     <xsd:element name="security-property" type="securityProperty" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:sequence>
                 <xsd:attribute name="delegate-ref" type="xsd:string" use="required"/>
+                <xsd:attribute name="rememberMe" type="xsd:boolean"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

@@ -9,6 +9,7 @@
  */
 package org.mule.module.shiro;
 
+import org.mule.api.MuleEvent;
 import org.mule.api.security.Authentication;
 
 import java.util.Map;
@@ -21,16 +22,23 @@ public class ShiroAuthentication implements Authentication
     private final AuthenticationToken token;
     private boolean authenticated;
     private Map properties;
+    private final MuleEvent event;
 
-    public ShiroAuthentication(AuthenticationToken token)
+    public ShiroAuthentication(AuthenticationToken token, MuleEvent event)
     {
-        this(token, null);
+        this(token, null, event);
     }
     
-    public ShiroAuthentication(AuthenticationToken token, Map properties)
+    public ShiroAuthentication(AuthenticationToken token, Map properties, MuleEvent event)
     {
         this.token = token;
         this.properties = properties;
+        this.event = event;
+    }
+
+    public MuleEvent getEvent()
+    {
+        return event;
     }
 
     public void setAuthenticated(boolean b)

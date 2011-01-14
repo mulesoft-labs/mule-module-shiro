@@ -9,18 +9,26 @@
  */
 package org.mule.module.shiro;
 
+import org.mule.api.MuleMessage;
 import org.mule.api.security.Authentication;
 import org.mule.api.security.SecurityException;
 import org.mule.security.AbstractSecurityProvider;
+import org.mule.transport.http.HttpConnector;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.WebSecurityManager;
+import org.apache.shiro.web.subject.WebSubject;
 
 public class ShiroAuthenticationProvider extends AbstractSecurityProvider
 {
     private SecurityManager securityManager;
+    private boolean rememberMe;
     
     public ShiroAuthenticationProvider()
     {
@@ -39,17 +47,30 @@ public class ShiroAuthenticationProvider extends AbstractSecurityProvider
             token = createShiroToken(authentication);
         }
         
-        DelegatingSubject subject = new DelegatingSubject(securityManager);
+        Subject subject;
+        
+        MuleMessage message = authentication.getEvent().getMessage();
+        HttpServletRequest req = (HttpServletRequest) message.getInvocationProperty(HttpConnector.HTTP_SERVLET_REQUEST_PROPERTY);
+        if (req != null && securityManager instanceof WebSecurityManager)
+        {
+            HttpServletResponse res = (HttpServletResponse) message.getInvocationProperty(HttpConnector.HTTP_SERVLET_RESPONSE_PROPERTY);
+            subject = new WebSubject.Builder(securityManager, req, res).buildWebSubject();
+        }
+        else
+        {
+            subject = new Subject.Builder(securityManager).buildSubject();
+        }
+        
         subject.login(token);
         
-        return new ShiroAuthenticationResult(subject, authentication.getProperties());
+        return new ShiroAuthenticationResult(subject, authentication.getProperties(), authentication.getEvent());
     }
 
     protected AuthenticationToken createShiroToken(Authentication authentication)
     {
-        AuthenticationToken token;
-        token = new UsernamePasswordToken((String)authentication.getPrincipal(),
+        UsernamePasswordToken token = new UsernamePasswordToken((String)authentication.getPrincipal(),
             authentication.getCredentials().toString().toCharArray());
+        token.setRememberMe(rememberMe);
         return token;
     }
 
@@ -61,6 +82,16 @@ public class ShiroAuthenticationProvider extends AbstractSecurityProvider
     public SecurityManager getDelegate()
     {
         return securityManager;
+    }
+
+    public boolean isRememberMe()
+    {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe)
+    {
+        this.rememberMe = rememberMe;
     }
 
 }
