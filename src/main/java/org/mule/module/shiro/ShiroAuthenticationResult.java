@@ -19,10 +19,10 @@ import org.apache.shiro.subject.Subject;
 public class ShiroAuthenticationResult implements Authentication
 {
 
-    private final Subject subject;
+    private transient final Subject subject;
     private boolean authenticated;
     private Map properties;
-    private final MuleEvent event;
+    private transient final MuleEvent event;
 
     public ShiroAuthenticationResult(Subject subject, MuleEvent event)
     {

@@ -5,8 +5,7 @@ A Mule SecurityManager implementation using Apache Shiro (http://shiro.apache.or
 Using the Shiro with Mule
 =========================
 
-NOTE: This currently requires Mule 3.2.0-SNAPSHOT and this is not an officially
-supported MuleSoft offering.
+NOTE: This currently requires Mule 3.2.0+ and is not an officially supported Mule offering.
 
 First, you need to declare your basic Shiro security setup:
 
@@ -92,5 +91,5 @@ To include the Shiro module, add the following to your dependencies:
     <dependency>
     	<groupId>org.mule.modules</groupId>
     	<artifactId>mule-module-shiro</artifactId>
-    	<version>0.1-SNAPSHOT</version>
+    	<version>1.0</version>
     </dependency>

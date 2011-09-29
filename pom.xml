@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-shiro</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Shiro integration for Mule</name>
     
     <properties>
-        <mule.version>3.2.0-SNAPSHOT</mule.version>
+        <mule.version>3.2.0</mule.version>
     </properties>
     
     <dependencies>
@@ -64,17 +64,17 @@
             </extension>
         </extensions>
     </build>
-    
+
     <distributionManagement>
         <repository>
-            <id>mule-releases</id>
-            <name>Mule Release Repository</name>
-            <url>dav:https://dav.codehaus.org/repository/mule/</url>
+            <id>mulesoft.releases</id>
+            <name>Muleforge Releases Repository</name>
+            <url>https://repository.mulesoft.org/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>mule-snapshots</id>
-            <name>Mule Snapshot Repository</name>
-            <url>dav:https://dav.codehaus.org/snapshots.repository/mule/</url>
+            <id>mulesoft.snapshots</id>
+            <name>Muleforge Snapshots Repository</name>
+            <url>https://repository.mulesoft.org/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>

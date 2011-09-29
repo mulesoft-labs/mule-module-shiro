@@ -10,14 +10,8 @@
 
 package org.mule.modules.shiro;
 
-import org.mule.tck.FunctionalTestCase;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-
-public class RememberMeTestCase extends FunctionalTestCase
+public class RememberMeTestCase extends AbstractShiroTestCase
 {
 
     protected String getConfigResources()
@@ -27,35 +21,8 @@ public class RememberMeTestCase extends FunctionalTestCase
 
     public void testAuthroizedUser() throws Exception
     {
-        doRequest("mule-realm", "localhost", "administrator", "password", "http://localhost:4567/permissions/auth", true, false, 200);
-        doRequest("mule-realm", "localhost", "administrator", "password", "http://localhost:4567/permissions/auth", true, false, 200);
+        doRequest("mule-realm", "localhost", "administrator", "password", "http://localhost:4567/permissions/auth", true, true, 200);
+        doRequest("mule-realm", "localhost", "administrator", "password", "http://localhost:4567/permissions/auth", true, true, 200);
     }
     
-    private void doRequest(String realm,
-                           String host,
-                           String user,
-                           String pass,
-                           String url,
-                           boolean handshake,
-                           boolean preemtive,
-                           int result) throws Exception
-    {
-        HttpClient client = new HttpClient();
-        client.getParams().setAuthenticationPreemptive(preemtive);
-        client.getState().setCredentials(new AuthScope(host, -1, realm),
-            new UsernamePasswordCredentials(user, pass));
-        GetMethod get = new GetMethod(url);
-        get.setDoAuthentication(handshake);
-
-        try
-        {
-            int status = client.executeMethod(get);
-            assertEquals(result, status);
-        }
-        finally
-        {
-            get.releaseConnection();
-        }
-    }
-
 }
