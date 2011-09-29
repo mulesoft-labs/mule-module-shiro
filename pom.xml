@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-shiro</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Shiro integration for Mule</name>
     
     <properties>
@@ -64,9 +64,9 @@
         </extensions>
     </build>
     <scm>
-        <connection>scm:git:git://github.com:mulesoft/mule-module-twitter.git</connection>
-        <developerConnection>scm:git:git@github.com:mulesoft/mule-module-twitter.git</developerConnection>
-        <url>http://github.com/mulesoft/mule-module-twitter</url>
+        <connection>scm:git:git://github.com:mulesoft/mule-module-shiro.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/mule-module-shiro.git</developerConnection>
+        <url>http://github.com/mulesoft/mule-module-shiro</url>
     </scm>
     <distributionManagement>
         <repository>
