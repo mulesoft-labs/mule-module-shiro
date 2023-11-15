@@ -6,7 +6,7 @@
     <name>Shiro integration for Mule</name>
     
     <properties>
-        <mule.version>3.2.0</mule.version>
+        <mule.version>3.8.0</mule.version>
     </properties>
     
     <dependencies>
